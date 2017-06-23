@@ -1,0 +1,22 @@
+{
+  "name": "stock-market",
+  "version": "1.0.0",
+  "description": "Chart the stock market.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmdaniels/stock-market.git"
+  },
+  "author": "cmdaniels",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cmdaniels/stock-market/issues"
+  },
+  "homepage": "https://github.com/cmdaniels/stock-market#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
