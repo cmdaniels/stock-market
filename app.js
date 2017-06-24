@@ -14,9 +14,7 @@ app.post('/yahoo', function(req, res) {
   var responses = [];
   var i = 0;
   req.body.stocks.split(',').forEach(function(stock) {
-    yahooStocks.history(stock, {
-      interval: '5d'
-    }).then(function(response) {
+    yahooStocks.history(stock).then(function(response) {
       response.ticker = stock;
       responses.push(response);
       i++;
