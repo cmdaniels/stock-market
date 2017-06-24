@@ -10,6 +10,14 @@ io.on('connection', function(socket){
   socket.emit('welcome', {
     stocks: tickerSymbols
   });
+  socket.on('add', function(data) {
+    tickerSymbols.push(data.symbol);
+    socket.broadcast.emit('add', data);
+  });
+  socket.on('remove', function(data) {
+    tickerSymbols.splice(tickerSymbols.indexOf(data.symbol), 1);
+    socket.broadcast.emit('remove', data);
+  });
 });
 
 app.use(express.static('public'));

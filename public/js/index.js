@@ -5,11 +5,37 @@ var stockChart;
 
 socket.on('welcome', function(data) {
   tickerSymbols = data.stocks;
+  tickerSymbols.forEach(function(symbol) {
+    $('.symbols').append('<button type="button" class="list-group-item" id="' + symbol + '" onclick="removeStock(this.id)">' + symbol + '</button>');
+  });
   drawGraph();
-});
+  socket.on('add', function(data) {
+    $.ajax({
+      type: 'POST',
+      url: '/yahoo',
+      data: {
+        stocks: data.symbol
+      },
+      success: function(res) {
+        var dataset = buildDatasets(res);
+        stockChart.data.datasets.push(dataset[0]);
+        stockChart.update();
+        $('.symbols').append('<button type="button" class="list-group-item" id="' + data.symbol + '" onclick="removeStock(this.id)">' + data.symbol + '</button>');
+      }
+    });
+  });
 
-tickerSymbols.forEach(function(symbol) {
-  $('.symbols').append('<button type="button" class="list-group-item" id="' + symbol + '" onclick="removeStock(this.id)">' + symbol + '</button>');
+  socket.on('remove', function(data) {
+    $('#' + data.symbol).remove();
+    var datasets = stockChart.data.datasets;
+    for(var i = 0; i < datasets.length; i++) {
+      if(datasets[i].label === data.symbol){
+        datasets.splice(i, 1);
+      }
+    }
+    stockChart.data.datasets = datasets;
+    stockChart.update();
+  });
 });
 
 function getRandomColor() {
@@ -114,6 +140,9 @@ function addStock() {
       $('.symbols').append('<button type="button" class="list-group-item" id="' + symbol + '" onclick="removeStock(this.id)">' + symbol + '</button>');
     }
   });
+  socket.emit('add', {
+    symbol: symbol
+  });
 }
 
 function removeStock(id) {
@@ -126,4 +155,7 @@ function removeStock(id) {
   }
   stockChart.data.datasets = datasets;
   stockChart.update();
+  socket.emit('remove', {
+    symbol: id
+  });
 }
