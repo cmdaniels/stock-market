@@ -2,6 +2,10 @@ var tickerSymbols = ['AAPL', 'FB'];
 var ctx = document.getElementById("stockChart").getContext('2d');
 var stockChart;
 
+tickerSymbols.forEach(function(symbol) {
+  $('.symbols').append('<button type="button" class="list-group-item" id="' + symbol + '" onclick="removeStock(this.id)">' + symbol + '</button>');
+});
+
 function getRandomColor() {
     var letters = '0123456789ABCDEF'.split('');
     var color = '#';
@@ -99,6 +103,19 @@ function addStock() {
       var dataset = buildDatasets(res);
       stockChart.data.datasets.push(dataset[0]);
       stockChart.update();
+      $('.symbols').append('<button type="button" class="list-group-item" id="' + symbol + '" onclick="removeStock(this.id)">' + symbol + '</button>');
     }
   });
+}
+
+function removeStock(id) {
+  $('#' + id).remove();
+  var datasets = stockChart.data.datasets;
+  for(var i = 0; i < datasets.length; i++) {
+    if(datasets[i].label === id){
+      datasets.splice(i, 1);
+    }
+  }
+  stockChart.data.datasets = datasets;
+  stockChart.update();
 }
