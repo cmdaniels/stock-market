@@ -1,6 +1,12 @@
-var tickerSymbols = ['AAPL', 'FB'];
+var socket = io.connect('http://localhost:3000');
+var tickerSymbols = [];
 var ctx = document.getElementById("stockChart").getContext('2d');
 var stockChart;
+
+socket.on('welcome', function(data) {
+  tickerSymbols = data.stocks;
+  drawGraph();
+});
 
 tickerSymbols.forEach(function(symbol) {
   $('.symbols').append('<button type="button" class="list-group-item" id="' + symbol + '" onclick="removeStock(this.id)">' + symbol + '</button>');
@@ -39,56 +45,58 @@ function buildDatasets(res) {
   return datasets;
 }
 
-$.ajax({
-  type: 'POST',
-  url: '/yahoo',
-  data: {
-    stocks: tickerSymbols.toString()
-  },
-  success: function(res) {
-    var datasets = buildDatasets(res);
-    stockChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        datasets: datasets
-      },
-      options: {
-        responsive: true,
-        elements: {
-          point: {
-            radius: 0
-          },
-          line: {
-            tension: 0
-          }
+function drawGraph() {
+  $.ajax({
+    type: 'POST',
+    url: '/yahoo',
+    data: {
+      stocks: tickerSymbols.toString()
+    },
+    success: function(res) {
+      var datasets = buildDatasets(res);
+      stockChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: datasets
         },
-        scales: {
-          xAxes: [{
-            type: 'time',
-            display: true,
-            scaleLabel: {
-              display: true,
-              labelString: 'Date'
+        options: {
+          responsive: true,
+          elements: {
+            point: {
+              radius: 0
             },
-            ticks: {
-              major: {
-                fontStyle: 'bold',
-                fontColor: '#FF0000'
-              }
+            line: {
+              tension: 0
             }
-          }],
-          yAxes: [{
-            display: true,
-            scaleLabel: {
+          },
+          scales: {
+            xAxes: [{
+              type: 'time',
               display: true,
-              labelString: 'Price'
-            }
-          }]
+              scaleLabel: {
+                display: true,
+                labelString: 'Date'
+              },
+              ticks: {
+                major: {
+                  fontStyle: 'bold',
+                  fontColor: '#FF0000'
+                }
+              }
+            }],
+            yAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Price'
+              }
+            }]
+          }
         }
-      }
-    });
-  }
-});
+      });
+    }
+  });
+}
 
 function addStock() {
   var symbol = $('#tickerSymbol')[0].value;
