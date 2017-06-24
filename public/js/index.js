@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:3000');
+var socket = io();
 var tickerSymbols = [];
 var ctx = document.getElementById("stockChart").getContext('2d');
 var stockChart;
