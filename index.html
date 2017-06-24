@@ -18,6 +18,14 @@
     </nav>
     <main>
       <div class="container">
+        <h1>Stock Market</h1>
+        <p>Chart the stock market with ChartJS.</p>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Ticker Symbol (ex: AAPL, AMZN, FB, MMM)" id="tickerSymbol"></input>
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" onclick="addStock()" id="addStock">Add Stock</button>
+          </span>
+        </div>
         <canvas id="stockChart" ></canvas>
       </div>
     </main>

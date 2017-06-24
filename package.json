@@ -1,7 +1,7 @@
 {
   "name": "stock-market",
   "version": "1.0.0",
-  "description": "Chart the stock market.",
+  "description": "Chart the stock market with NodeJS and ChartJS.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

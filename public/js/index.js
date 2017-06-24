@@ -1,5 +1,6 @@
-var stockTickers = ['AAPL', 'FB'];
+var tickerSymbols = ['AAPL', 'FB'];
 var ctx = document.getElementById("stockChart").getContext('2d');
+var stockChart;
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF'.split('');
@@ -10,35 +11,39 @@ function getRandomColor() {
     return color;
 }
 
+function buildDatasets(res) {
+  var datasets = [];
+  res.forEach(function(stockData) {
+    var data = [];
+    stockData.records.forEach(function(rec) {
+      data.push({
+        x: new Date(rec.time * 1000),
+        y: rec.close
+      });
+    });
+    datasets.push({
+      label: stockData.ticker,
+      fill: false,
+      data: data
+    });
+  });
+  for(var i = 0; i < datasets.length; i++) {
+    var color = getRandomColor();
+    datasets[i].backgroundColor = color;
+    datasets[i].borderColor = color;
+  }
+  return datasets;
+}
+
 $.ajax({
   type: 'POST',
   url: '/yahoo',
   data: {
-    stocks: stockTickers.toString()
+    stocks: tickerSymbols.toString()
   },
   success: function(res) {
-    console.log(res);
-    var datasets = [];
-    res.forEach(function(stockData) {
-      var data = [];
-      stockData.records.forEach(function(rec) {
-        data.push({
-          x: new Date(rec.time * 1000),
-          y: rec.close
-        });
-      });
-      datasets.push({
-        label: stockData.ticker,
-        fill: false,
-        data: data
-      });
-    });
-    for(var i = 0; i < datasets.length; i++) {
-      var color = getRandomColor();
-      datasets[i].backgroundColor = color;
-      datasets[i].borderColor = color;
-    }
-    var stockChart = new Chart(ctx, {
+    var datasets = buildDatasets(res);
+    stockChart = new Chart(ctx, {
       type: 'line',
       data: {
         datasets: datasets
@@ -48,6 +53,9 @@ $.ajax({
         elements: {
           point: {
             radius: 0
+          },
+          line: {
+            tension: 0
           }
         },
         scales: {
@@ -77,3 +85,20 @@ $.ajax({
     });
   }
 });
+
+function addStock() {
+  var symbol = $('#tickerSymbol')[0].value;
+  $('#tickerSymbol')[0].value = '';
+  $.ajax({
+    type: 'POST',
+    url: '/yahoo',
+    data: {
+      stocks: symbol
+    },
+    success: function(res) {
+      var dataset = buildDatasets(res);
+      stockChart.data.datasets.push(dataset[0]);
+      stockChart.update();
+    }
+  });
+}

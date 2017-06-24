@@ -1,0 +1,9 @@
+p,
+h1 {
+  text-align: center;
+}
+
+.input-group {
+  max-width: 400px;
+  margin: 0 auto 32px;
+}
