@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var yahooStocks = require('yahoo-stocks');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var tickerSymbols = ['AAPL', 'FB'];
+var tickerSymbols = ['AMZN','GOOG','AMD'];
 
 io.on('connection', function(socket){
   socket.emit('welcome', {
